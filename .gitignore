@@ -2,3 +2,6 @@
 *.iml
 ## Directory-based project format:
 .idea/
+
+debug.log
+/target

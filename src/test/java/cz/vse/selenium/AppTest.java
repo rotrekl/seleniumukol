@@ -8,6 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -72,7 +73,7 @@ public class AppTest {
     }
 
     @Test
-    public void shouldCreateNewUser() {
+    public void shouldCreateNewUser() throws InterruptedException {
         // Given
         shouldLoginUsingValidCredentials();
 
@@ -103,41 +104,52 @@ public class AppTest {
 
         WebElement searchInput = driver.findElement(By.cssSelector("#members_filter input"));
         searchInput.sendKeys(uuid);
+        Thread.sleep(500);
 
+        // to verify if record is shown in table grid, we first filter the whole table to get exactly one data row
+        // that row should contain previously generated UUID value (in last name
         // UKOL...opravit, doplnit tak, aby se provedla verifikace ze kontakt, ktery jsme vytvorili opravdu existuje
         //    (jde vyhledat a zobrazi se v tabulce)
         //    doporucuji radek tabulky s danou osobou projit (traverzovat), nebo jinym zpusobem v nem najit retezec UUID, ktery jednoznacne identifikuje pridanou osobu
-        WebElement personTableRow = driver.findElement(By.cssSelector("table#members tr"));
+        List<WebElement> elements = driver.findElements(By.cssSelector("table#members tr"));
+        Assert.assertEquals(2, elements.size());
+
+        // data row is at index 0, header row is at index 1  (because in ChurchCRM html code there is tbody before thead)
+        WebElement personTableRow = elements.get(0);
 
 
         // option1
         Assert.assertTrue(personTableRow.getText().contains(uuid));
 
-
-        // option2
-
+        // option2 - traverse all cells in table grid
         List<WebElement> cells = personTableRow.findElements(By.tagName("td"));
-        Assert.assertEquals(9, cells.size());
+        final int EXPECTED_COLUMNS = 9;
+        Assert.assertEquals(EXPECTED_COLUMNS, cells.size());
         for (int i = 0; i < cells.size(); i++) {
-            System.out.println(cells.get(i).getText() + "        // " + cells.get(i));
-        }
+            WebElement cell = cells.get(i);
+            if (cell.getText().contains(uuid)) {
+                //
+            }
 
+            System.out.println(cells.get(i).getText());
+        }
     }
 
 
     @Test
-    public void insertDeposit() throws InterruptedException {
+    public void given_userIsLoggedIn_when_userAddsNewDeposit_then_depositRecordIsShownInDepositTableGrid() throws InterruptedException {
+        // GIVEN user is logged in
+
         shouldLoginUsingValidCredentials();
+
+        // WHEN user adds deposit comment
 
         driver.get("http://digitalnizena.cz/church/FindDepositSlip.php");
 
         WebElement depositCommentInput = driver.findElement(By.cssSelector("#depositComment"));
-        String depositComment = "deposit-PavelG-" + UUID.randomUUID().toString();
+        String uuid = UUID.randomUUID().toString();
+        String depositComment = "deposit-PavelG-" + uuid;
         depositCommentInput.sendKeys(depositComment);
-
-        WebElement depositTypeElement = driver.findElement(By.cssSelector("#depositType"));
-        Select depositTypeSelect = new Select(depositTypeElement);
-        //depositTypeSelect.selectByVisibleText("Credit Card");
 
         WebElement depositDateInput = driver.findElement(By.cssSelector("#depositDate"));
         depositDateInput.click();
@@ -147,14 +159,42 @@ public class AppTest {
         WebElement addDepositButton = driver.findElement(By.cssSelector("#addNewDeposit"));
         addDepositButton.click();
 
-        Thread.sleep(2000);       // FIXME   task za 5 bludistaku, sleep se NIKDY NIKDY nepouziva, prosim odstrante ho a nahradte lepsi konstrukci
+        // THEN newly added deposit should be shown in deposits table grid
+
+        // option1 - wait exactly 2 seconds, blocks the thread ....not recommended
+        // Thread.sleep(2000);
+
+        // option2 - use custom "expected condition" of WebDriver framework
+        WebDriverWait wait = new WebDriverWait(driver, 2);     // timeout after 2 seconds
+        wait.until(new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver webDriver) {
+                // each time, we try to get the very first row from table grid and check, if contains the last record
+
+                List<WebElement> depositRows = driver.findElements(By.cssSelector("#depositsTable_wrapper #depositsTable tbody tr"));
+                WebElement firstRow = depositRows.get(0);
+                String innerHTML = firstRow.getAttribute("innerHTML");
+
+                if (innerHTML.contains(uuid)) {
+                    Assert.assertTrue(innerHTML.contains("10-30-18"));    // beware, different date format in table grid vs. input field
+                    Assert.assertTrue(innerHTML.contains(depositComment));
+                    return true;     // expected condition is met
+                } else {
+                    return false;    // selenium webdriver will continue polling the DOM each 500ms and check the expected condition by calling method apply(webDriver) again
+                }
+            }
+        });
+    }
+
+    @Test
+    public void deleteDeposits() throws InterruptedException {
+        shouldLoginUsingValidCredentials();
+
+        driver.get("http://digitalnizena.cz/church/FindDepositSlip.php");
+
+        Thread.sleep(1000);
 
         List<WebElement> depositRows = driver.findElements(By.cssSelector("#depositsTable_wrapper #depositsTable tbody tr"));
-        WebElement firstRow = depositRows.get(0);
-        String innerHTML = firstRow.getAttribute("innerHTML");
-        Assert.assertTrue(innerHTML.contains("10-30-18"));    // TODO pozor jiny format
-        Assert.assertTrue(innerHTML.contains(depositComment));
-
 
         for (WebElement row : depositRows) {
             row.click();
@@ -172,6 +212,18 @@ public class AppTest {
         // actually the application behaves incorrect => when delete all rows, Delete button should be disabled
         // we have our test correct, so it good that test fails!
         Assert.assertFalse(deleteButton.isEnabled());
+    }
+
+    @Test
+    public void loadingExample() {
+        driver.get("http://digitalnizena.cz/priklad/loading1.html");
+
+        WebElement button = driver.findElement(By.cssSelector("#my-button"));
+
+        WebDriverWait wait = new WebDriverWait(driver, 12);
+        wait.until(ExpectedConditions.visibilityOf(button));
+
+        // here in code, we are 100% sure, that button is visible
     }
 
 
