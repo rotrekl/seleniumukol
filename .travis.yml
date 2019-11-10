@@ -12,7 +12,10 @@ cache:
     - $HOME/.m2
 
 install: true
-script: ./mvnw clean install
+
+script:
+  - "mvn compile"
+#script: ./mvnw clean install
 #before_script:
 #  - wget http://chromedriver.storage.googleapis.com/2.24/chromedriver_linux64.zip
 #  - unzip chromedriver_linux64.zip -d /home/travis/virtualenv/python2.7.12/bin/
