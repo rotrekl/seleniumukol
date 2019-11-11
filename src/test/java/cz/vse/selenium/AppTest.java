@@ -30,7 +30,7 @@ public class AppTest {
     //    System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
 //        ChromeDriverService service = new ChromeDriverService()
         ChromeOptions cho = new ChromeOptions();
-        cho.addArguments("--headless");
+        cho.addArguments("headless");
         driver = new ChromeDriver(cho);
 //        driver.manage().window().maximize();
     }
