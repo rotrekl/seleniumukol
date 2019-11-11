@@ -1,7 +1,6 @@
 language: java
 
 before_install:
-  - chmod 777 chromedriver
   - chmod 777 ./seleniumexample/src/test/resources/drivers/chromedriver.exe
   - chmod 777 ./seleniumexample/target/test-classes/drivers/chromedriver.exe
   - echo $TRAVIS_COMMIT
