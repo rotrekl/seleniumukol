@@ -3,8 +3,8 @@ language: java
 before_install:
   - pwd
   - "ls -la"
-#  - chmod 777 ./seleniumexample/src/test/resources/drivers/chromedriver.exe
-  - chmod 777 ./seleniumexample/target/test-classes/drivers/chromedriver.exe
+  - chmod 777 ./src/test/resources/drivers/chromedriver.exe
+  - chmod 777 ./target/test-classes/drivers/chromedriver.exe
   - echo $TRAVIS_COMMIT
   - echo $TRAVIS_TAG
   - echo $TRAVIS_BRANCH
