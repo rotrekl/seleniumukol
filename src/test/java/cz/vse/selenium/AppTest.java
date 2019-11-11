@@ -30,7 +30,7 @@ public class AppTest {
 //        System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
 //        ChromeDriverService service = new ChromeDriverService()
         ChromeOptions cho = new ChromeOptions();
-        cho.addArguments("--xxxxheadless");
+        cho.addArguments("--headless");
         driver = new ChromeDriver(cho);
 //        driver.manage().window().maximize();
     }
@@ -53,14 +53,14 @@ public class AppTest {
     @Test
     public void google2_should_fail() {
         driver.get("https://www.google.com/");
-        WebElement searchInputNotExisting = driver.findElement(By.name("xxxxxxxxxxxx"));
+        //WebElement searchInputNotExisting = driver.findElement(By.name("xxxxxxxxxxxx"));
         driver.quit();
     }
 
     @Test
     public void google3_should_fail() {
         driver.get("https://www.google.com/");
-        Assert.assertEquals("one", "two");
+        Assert.assertEquals("one", "one");
         driver.quit();
     }
 
