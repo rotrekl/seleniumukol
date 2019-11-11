@@ -53,7 +53,7 @@ public class AppTest {
     @Test
     public void google2_should_fail() {
         driver.get("https://www.google.com/");
-        //WebElement searchInputNotExisting = driver.findElement(By.name("xxxxxxxxxxxx"));
+        WebElement searchInputNotExisting = driver.findElement(By.name("kdsfkladsjfas"));
         driver.quit();
     }
 
