@@ -27,7 +27,7 @@ public class AppTest {
 
     @Before
     public void init() {
-//        System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
+    //    System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
 //        ChromeDriverService service = new ChromeDriverService()
         ChromeOptions cho = new ChromeOptions();
         cho.addArguments("--headless");
@@ -60,7 +60,7 @@ public class AppTest {
     @Test
     public void google3_should_fail() {
         driver.get("https://www.google.com/");
-        Assert.assertEquals("one", "one");
+        Assert.assertEquals("two", "one");
         driver.quit();
     }
 
