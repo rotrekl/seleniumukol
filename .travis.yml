@@ -2,9 +2,13 @@ language: java
 
 before_install:
   - pwd
-  - "ls -la"
   - chmod 777 ./src/test/resources/drivers/chromedriver.exe
   - chmod 777 ./target/test-classes/drivers/chromedriver.exe
+  - wget https://chromedriver.storage.googleapis.com/2.41/chromedriver_linux64.zip
+  - unzip chromedriver_linux64.zip
+  - "ls -la"
+  - wget https://selenium-release.storage.googleapis.com/3.13/selenium-server-standalone-3.13.0.jar
+  - xvfb-run java -Dwebdriver.chrome.driver=/usr/bin/chromedriver -jar selenium-server-standalone.jar
   - echo $TRAVIS_COMMIT
   - echo $TRAVIS_TAG
   - echo $TRAVIS_BRANCH
