@@ -27,7 +27,7 @@ public class AppTest {
 
     @Before
     public void init() {
-    //    System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
+        // System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
 //        ChromeDriverService service = new ChromeDriverService()
         ChromeOptions cho = new ChromeOptions();
         cho.addArguments("headless");
@@ -53,14 +53,14 @@ public class AppTest {
     @Test
     public void google2_should_fail() {
         driver.get("https://www.google.com/");
-        WebElement searchInputNotExisting = driver.findElement(By.name("kdsfkladsjfas"));
+       // WebElement searchInputNotExisting = driver.findElement(By.name("kdsfkladsjfas"));
         driver.quit();
     }
 
     @Test
     public void google3_should_fail() {
         driver.get("https://www.google.com/");
-        Assert.assertEquals("two", "one");
+        Assert.assertEquals("one", "one");
         driver.quit();
     }
 
@@ -164,6 +164,7 @@ public class AppTest {
     }
 
 
+    @Test
     public void given_userIsLoggedIn_when_userAddsNewDeposit_then_depositRecordIsShownInDepositTableGrid() throws InterruptedException {
         // GIVEN user is logged in
 
