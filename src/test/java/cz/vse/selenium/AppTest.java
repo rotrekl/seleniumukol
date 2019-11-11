@@ -5,9 +5,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -25,7 +27,8 @@ public class AppTest {
 
     @Before
     public void init() {
-        //System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "src/test/resources/drivers/chromedriver.exe");
+//        ChromeDriverService service = new ChromeDriverService()
         ChromeOptions cho = new ChromeOptions();
         cho.addArguments("headless");
         driver = new ChromeDriver(cho);
@@ -38,6 +41,29 @@ public class AppTest {
     }
 
     @Test
+    public void google1_should_pass() {
+        driver.get("https://www.google.com/");
+        WebElement searchInput = driver.findElement(By.name("q"));
+        searchInput.sendKeys("travis");
+        searchInput.sendKeys(Keys.ENTER);
+        Assert.assertTrue(driver.getTitle().startsWith("travis - "));
+        driver.quit();
+    }
+
+    @Test
+    public void google2_should_fail() {
+        driver.get("https://www.google.com/");
+        WebElement searchInputNotExisting = driver.findElement(By.name("xxxxxxxxxxxx"));
+        driver.quit();
+    }
+
+    @Test
+    public void google3_should_fail() {
+        driver.get("https://www.google.com/");
+        Assert.assertEquals("one", "two");
+        driver.quit();
+    }
+
     public void shouldNotLoginUsingInvalidPassword() {
         // given
         driver.get("https://opensource-demo.orangehrmlive.com/");
@@ -46,7 +72,7 @@ public class AppTest {
         WebElement usernameInput = driver.findElement(By.id("txtUsername"));
         usernameInput.sendKeys("admin");
         WebElement passwordInput = driver.findElement(By.id("txtPassword"));
-        passwordInput.sendKeys("admin");
+        passwordInput.sendKeys("invalidPassssssssword");
         WebElement loginButton = driver.findElement(By.id("btnLogin"));
         loginButton.click();
 
@@ -60,6 +86,7 @@ public class AppTest {
     }
 
 
+    @Test
     public void shouldLoginUsingValidCredentials() {
         // given
         //driver.get("http://demo.churchcrm.io/master/");
